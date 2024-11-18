@@ -109,7 +109,10 @@ if file_upload is not None:
     u_df = u_df.reindex(columns=all_columns, fill_value=0)
 
     # Display the processed DataFrame
-    st.write(u_df)
+    #st.write(u_df)
+
+    u_df = u_df.drop('traffic_volume',axis=1)
+    print(u_df.columns)
 
     u_df['prediction'] = xgb_reg.predict(u_df)
     upload_f['prediction'] = u_df['prediction']
