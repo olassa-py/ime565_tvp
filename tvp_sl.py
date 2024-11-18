@@ -17,12 +17,9 @@ st.title('Traffic Volume Predictor')
 st.write("Utilize our advanced Machine Learning application to predict traffic volume.") 
 st.image('traffic_image.gif', use_column_width = True)
 
-# Reading the pickle file that we created before 
-# xgb_pickle = open('xgb_tvp.pickle', 'rb') 
-# xgb_reg = pickle.load(xgb_pickle) 
-# xgb_pickle.close()
-with open('xgb_tvp.pickle', 'rb') as xgb_pickle:
-    xgb_reg = pickle.load(xgb_pickle)
+xgb_pickle = open('xgb_tvp.pickle', 'rb') 
+xgb_reg = pickle.load(xgb_pickle) 
+xgb_pickle.close()
 
 mapie = MapieRegressor(xgb_reg)
 
@@ -68,7 +65,9 @@ with st.sidebar.expander("Option 2: Fill Out Form", expanded = False):
     hour = st.selectbox('Choose hour', options=sorted(base_df['hour'].unique()))
     form_button = st.button('Submit Form Data')
 
-if file_upload is None or form_button is None:
+if file_upload is not None:
+    st.info('ℹ️&nbsp;&nbsp; *Please choose a data input method to proceed.*')
+elif file_upload is None and form_button is None:
     st.info('ℹ️&nbsp;&nbsp; *Please choose a data input method to proceed.*')
 else:
     pass
@@ -77,20 +76,6 @@ alpha = st.slider('Select alpha value for prediction intervals', min_value=0.01,
 
 # If a file is uploaded
 if file_upload is not None:
-    # st.success("CSV file uploaded successfully.")
-    # upload_f = pd.read_csv(file_upload)
-    # upload_f['holiday'].fillna('None', inplace=True)
-    # cat_var = ['hour', 'month', 'weekday', 'holiday', 'weather_main']
-    # u_df = pd.get_dummies(upload_f, columns=cat_var)
-    # order = ['temp', 'rain_1h', 'snow_1h', 'clouds_all', 'hour_0', 'hour_1', 'hour_2', 'hour_3', 'hour_4', 'hour_5', 'hour_6', 'hour_7', 'hour_8', 'hour_9', 'hour_10', 'hour_11', 'hour_12', 'hour_13', 'hour_14', 'hour_15', 'hour_16', 'hour_17', 'hour_18', 'hour_19', 'hour_20', 'hour_21', 'hour_22', 'hour_23', 'month_April', 'month_August', 'month_December', 'month_February', 'month_January', 'month_July', 'month_June', 'month_March', 'month_May', 'month_November', 'month_October', 'month_September', 'weekday_Friday', 'weekday_Monday', 'weekday_Saturday', 'weekday_Sunday', 'weekday_Thursday', 'weekday_Tuesday', 'weekday_Wednesday', 'holiday_Christmas Day', 'holiday_Columbus Day', 'holiday_Independence Day', 'holiday_Labor Day', 'holiday_Martin Luther King Jr Day', 'holiday_Memorial Day', 'holiday_New Years Day', 'holiday_State Fair', 'holiday_Thanksgiving Day', 'holiday_Veterans Day', 'holiday_Washingtons Birthday', 'weather_main_Clear', 'weather_main_Clouds', 'weather_main_Drizzle', 'weather_main_Fog', 'weather_main_Haze', 'weather_main_Mist', 'weather_main_Rain', 'weather_main_Smoke', 'weather_main_Snow', 'weather_main_Squall', 'weather_main_Thunderstorm']
-    # u_df = u_df[order]
-    # st.write(u_df)
-    # u_df['prediction'] = xgb_reg.predict(u_df)
-    # upload_f['prediction'] = u_df['prediction']
-
-    # ci = (1 - alpha) * 100
-    # st.write(f'## Prediction Result with a {ci:.0f}% Confidence Interval')
-    # st.write(upload_f)
     cat_var = ['hour', 'month', 'weekday', 'holiday', 'weather_main']
     base_df_dummies = pd.get_dummies(base_df, columns=cat_var)
 
@@ -107,9 +92,6 @@ if file_upload is not None:
 
     # Align u_df to match the columns in all_columns (filling missing columns with 0)
     u_df = u_df.reindex(columns=all_columns, fill_value=0)
-
-    # Display the processed DataFrame
-    #st.write(u_df)
 
     u_df = u_df.drop('traffic_volume',axis=1)
     print(u_df.columns)
@@ -132,7 +114,7 @@ else:
     cat_var = ['hour', 'month', 'weekday', 'holiday', 'weather_main']
     encode_dummy_df = pd.get_dummies(encode_df, columns=cat_var)
 
-    order = ['temp', 'rain_1h', 'snow_1h', 'clouds_all', 'hour_0', 'hour_1', 'hour_2', 'hour_3', 'hour_4', 'hour_5', 'hour_6', 'hour_7', 'hour_8', 'hour_9', 'hour_10', 'hour_11', 'hour_12', 'hour_13', 'hour_14', 'hour_15', 'hour_16', 'hour_17', 'hour_18', 'hour_19', 'hour_20', 'hour_21', 'hour_22', 'hour_23', 'month_April', 'month_August', 'month_December', 'month_February', 'month_January', 'month_July', 'month_June', 'month_March', 'month_May', 'month_November', 'month_October', 'month_September', 'weekday_Friday', 'weekday_Monday', 'weekday_Saturday', 'weekday_Sunday', 'weekday_Thursday', 'weekday_Tuesday', 'weekday_Wednesday', 'holiday_Christmas Day', 'holiday_Columbus Day', 'holiday_Independence Day', 'holiday_Labor Day', 'holiday_Martin Luther King Jr Day', 'holiday_Memorial Day', 'holiday_New Years Day', 'holiday_State Fair', 'holiday_Thanksgiving Day', 'holiday_Veterans Day', 'holiday_Washingtons Birthday', 'weather_main_Clear', 'weather_main_Clouds', 'weather_main_Drizzle', 'weather_main_Fog', 'weather_main_Haze', 'weather_main_Mist', 'weather_main_Rain', 'weather_main_Smoke', 'weather_main_Snow', 'weather_main_Squall', 'weather_main_Thunderstorm']
+    order = ['temp', 'rain_1h', 'snow_1h', 'clouds_all', 'hour_0', 'hour_1', 'hour_2', 'hour_3', 'hour_4', 'hour_5', 'hour_6', 'hour_7', 'hour_8', 'hour_9', 'hour_10', 'hour_11', 'hour_12', 'hour_13', 'hour_14', 'hour_15', 'hour_16', 'hour_17', 'hour_18', 'hour_19', 'hour_20', 'hour_21', 'hour_22', 'hour_23', 'month_April', 'month_August', 'month_December', 'month_February', 'month_January', 'month_July', 'month_June', 'month_March', 'month_May', 'month_November', 'month_October', 'month_September', 'weekday_Friday', 'weekday_Monday', 'weekday_Saturday', 'weekday_Sunday', 'weekday_Thursday', 'weekday_Tuesday', 'weekday_Wednesday', 'holiday_Christmas Day', 'holiday_Columbus Day', 'holiday_Independence Day', 'holiday_Labor Day', 'holiday_Martin Luther King Jr Day', 'holiday_Memorial Day', 'holiday_New Years Day', 'holiday_None', 'holiday_State Fair', 'holiday_Thanksgiving Day', 'holiday_Veterans Day', 'holiday_Washingtons Birthday', 'weather_main_Clear', 'weather_main_Clouds', 'weather_main_Drizzle', 'weather_main_Fog', 'weather_main_Haze', 'weather_main_Mist', 'weather_main_Rain', 'weather_main_Smoke', 'weather_main_Snow', 'weather_main_Squall', 'weather_main_Thunderstorm']
     encode_dummy_df = encode_dummy_df[order]
 
     # Extract the encoded user data (the last row added)
